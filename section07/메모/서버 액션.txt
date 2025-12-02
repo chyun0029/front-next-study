@@ -1,0 +1,69 @@
+# 서버 액션
+브라우저에서 호출할 수 있는 서버에서 실행되는 비동기 함수
+서버 액션의 목적은 더 간결하고 편리하게 서버 측에서 실행되는 동작을 정의하는것
+
+function createReviewAction(){"use server"..}
+서버 측에서만 실행되는 코드이기 때문에 클라이언트인 브라우저에서는 호출만 가능, 이 코드를 전달받지는 않음
+-> 보안상으로 민감하거나 중요한 데이터를 다룰때 유용하게 활용
+
+# 2강) 리뷰 추가 기능 구현하기
+onebite-server 프로젝트 터미널 npx prisma studio 열고 localhost:5555 접속해서 DB 확인
++ /actions/create-review.actions.tsx 상위 폴더, 파일로 관리
+<input hidden readOnly name="bookId" value={bookId} />
+    => hidden readOnly 옵션으로 bookId 전달
+    => formData로 넘겨야해서 input으로 전달하기 위해
+
+# 3강) 리뷰 조회 기능 구현하기
++ /components/review-XXX 파일들
+page.tsx에 있던 ReviewEditor 컴포넌트로 review-editor.tsx 파일로 분리함.
+하나 안에 너무 많으면 css 겹치니까
+
+# 4강) 리뷰 재검증 구현하기
+리뷰 작성하면 작성한 리뷰 화면에 바로 나오게
+
+## revalidatePath() (create-review.actions.tsx)
+- book 페이지 서버측에서 재생성
+- 서버측에서만 사용가능
+
+## 주의사항(폴더 이미지)
+1. revalidatePath()는 해당 페이지와 관련된 모든 캐시를 무효화(삭제)한다.
+2. 추가로 페이지 자체를 캐싱하는 풀 라우트 캐시도 삭제(Purge=숙청하다)하며, 풀 라우트 캐시에 새롭게 업데이트하진 않는다
+    다음에 방문하면 새로 동적 페이지 만든 후에 풀 라우트 캐시에 넣는다.
+
+# 5강) 다양한 재검증 방식 살펴보기
+revalidatePath 두 번째 파라미터 옵션 2개: page, layout
+필기 in ~/actions/create-review.actions.tsx
+
+# 6강) 클라이언트 컴포넌터에서의 서버액션
+리뷰 작성글 누르고 대기하는동안 보여줄 화면상태 설정함
++ create-review.actions.tsx - useActionState (React 19)
++ 다음 리턴문 반환 작성 review-editor.tsx
+    return {
+        status: false,
+        error: "리뷰 내용과 작성자를 입력해주세요",
+    };
+
+=> 폼 태그 사용할때는 여기서 만들었듯이
+중복 제출 방지 <button disabled={isPending}.. /> ,
+에러 핸들링 return { status: false, error: "에러 멘트" }
+등이 요구사항으로 필요하기 떄문에
+왠만하면 클라이언트 컴포넌트로 만들어서 useActionState를 적극 사용할것
+
+## copilot
+1. 기본 설명
+useActionState는 비동기 액션(예: 서버로 데이터 전송, 데이터 검증 등)의 실행 상태와 결과, 에러 등을 관리할 수 있는 훅입니다.
+주로 폼(form) 처리 시, 서버 액션을 곧바로 연결하고, 그 결과(성공/실패/진행중 등)에 따라 UI를 갱신하는 데 사용합니다.
+
+2. 사용법
+const [state, formAction, isPending] = useActionState(
+  action,          // 비동기 함수 (예: 서버 액션)
+  initialState,    // 상태의 초기값
+  ...deps          // (선택) 의존성 배열
+);
+state: 현재 액션의 상태(예: 응답 데이터, 에러 등)
+formAction: 폼이나 버튼에 연결하는 액션 실행 함수
+isPending: 액션이 실행 중인지 여부(boolean)
+
+# 7강) 리뷰 삭제 기능 구현하기
++ delete-review.actions.ts
++ review-item-delete-button.tsx 분리, 'use client'
