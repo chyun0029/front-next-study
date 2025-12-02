@@ -1,0 +1,39 @@
+# 1강) Parallel Route
+소셜 미디어 서비스나 관리자의 대시보드 페이지처럼 복잡한 구조의 UI에 활용
+(Next의 핵심 기능은 아님)
++ /parallel 따로 만들어서 진행
+
+@폴더명 : Slot; 병렬로 렌더링될 페이지 컴포넌트를 보관하는 폴더
+Slot은 URL 경로에는 아무런 영향을 미치지 않음 Like Route Group /(with-searchbar)
+Slot 개수 제한 없다
+
+* 화면 제대로 안나오면 dev 멈추고 .next 폴더 삭제 후 다시 run dev
+
+# 2강) Intercepting Route
+처음 진입할때의 화면과 다시 진입(새로고침) 했을때의 화면을 다르게 하고 싶을 때
+실제 사례 인스타(컴퓨터)
+진입1 - 인스타 피드 누르면 상세페이지가 모달처럼 위 화면에 뜸
+진입2 - 새로고침하면 상세페이지로 아예 이동함
+
++ app/(.)book/[id] - 동일 경로 상의 페이지를 인터셉트
++ components/modal.tsx , createPortal
+
+# 3강) Parallel Route + Intercepting Route
+2강까지는 모달 띄웠을때 뒷배경에 책 목록이 아니라 임시화면이었음
+-> 병렬로 책 목록이 뒷배경에 나오도록 변경해보기
+
+* 2강까지의 (.)book/[id]/page.tsx 임시화면
+export default function Page(props: any) {
+    return <div>
+        가로채기 성공!
+        <Modal>
+            <BookPage {...props} />
+        </Modal>
+    </div>;
+}
+
++ @modal 폴더 생성하여 기존 (.)book을 옮김
++ @modal/default.tsx
++ app/layout.tsx modal 추가
+
+app/layout 헷갈림, 구성 이해 잘안됨
