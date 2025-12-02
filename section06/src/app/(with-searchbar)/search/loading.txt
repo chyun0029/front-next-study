@@ -1,0 +1,7 @@
+// // 대체 UI
+// export default function Loading() {
+//     return <div>Loading...</div>
+// }
+
+원래 loading.tsx 파일이었는데
+그대로 두면 기본 loading 컴포넌트로 인식해서 txt로 확장자명 변경

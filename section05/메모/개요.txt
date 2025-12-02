@@ -1,0 +1,47 @@
+# 풀 라우트 캐시(Full Route Cache) (자동 적용)
+Next 서버측에서 빌드 타임에 특정 페이지의 렌더링 결과를 캐싱하는 기능 (= SSG 비슷)
+정적 페이지에 사용
+
+# 동적 페이지(Dynamic Page)로 설정되는 기준
+"특정 페이지가 접속 요청을 받을 때마다 변화가 생기거나, 데이터가 달라질 경우"
+1. 캐시되지 않는 Data Fetching을 사용할 경우
+    {cache: 'no-store'}
+2. 동적 함수(쿠키, 헤더, 쿼리스트링)을 사용하는 컴포넌트가 있을때
+    {cookies, headers, searchParams}
+
+# 특징
+- 정적 페이지가 동적 페이지보다 빠르니 좀 더 권장된다
+- 당연히 서버 컴포넌트만 해당됨
+- revalidate 가능하며 ISR처럼 동작
+- App Router(13+)에서는 특별한 설정 없이 Full Route Cache가 자동 적용
+
+# 2강) 정적 페이지로 빌드되도록
+search/layout.tsx - <Suspense>..</Suspense>
+app/layout.tsx - Footer() / fetch {cache: 'force-cache'}
+정적 페이지로 동작하게 코드 수정후 빌드해서 'Route /' 홈 경로 Static 페이지 확인
+    .next/server/app/index.html 존재 캐싱된 정적 페이지로 빠른 응답
+
+# 3강) 동적 경로에 적용하기
+search/page.tsx - 동적 페이지지만 검색 결과 캐싱으로 저장.
+                    force-cache
+book/page.tsx - 약속된 함수명과 리턴으로 어떤 파라미터(문자열)가 빌드 타임에 존재할 수 있도록 설정.
+                    generatedStaticParams
+              - 404에서 next의 notFound() 함수 호출 ~ not-found.tsx에서의 동일명함수 호출
+              - dynamicParams = false 설정하면 1,2,3 페이지 외에는 404 반환하도록
+
+빌드 결과 - html 페이지가 빌드 타임에 렌더링 완료되어 서버 측에 풀 라우트 캐시 되어 보관됨 확인
+├ ● /book/[id]                             284 B         102 kB
+├   ├ /book/1
+├   ├ /book/2
+├   └ /book/3
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+
+# 4강) 라우트 세그먼트 옵션
+- 특정 페이지의 유형을 강제로 Static, Dynamic 페이지로 설정
+- 기본값 그대로 둘것
+- (with-searchbar)/page.tsx 설명 작성
+
+# 5강) 클라이언트 라우터 캐시 (자동 적용)
+클라이언트 라우터 캐시가 없다면 ~/search로 요청했을때 ~/, ~/search 두번 요청하고 전달받게 된다(중복)
+-> 중복 막고자 Next에서는 클라이언트 라우터 캐시에 공통 레이아웃을 담당하는 RSC Payload를 저장해둔다
+-> 다음에 ~/search로 요청하면 서버에 요청하지 않고 클라이언트 라우터 캐시에서 RSC Payload를 꺼내서 사용

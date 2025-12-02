@@ -1,0 +1,39 @@
+# 페이지 스트리밍
+- Next에서 자체적으로 스트리밍 기능을 제공
+- '동적 페이지'에 자주 사용된다
+- 렌더링하는데 오래 걸리는 컴포넌트 결과를 뒤늦게 보내준다
+- 오래 걸리는 컴포넌트의 렌더링을 사용자가 좀 더 좋은 환경에서 기다릴 수 있도록,
+  빨리 렌더링 할 수 있는 컴포넌트들을 밑반찬처럼 내주는 것
+
+# 2강) 페이지 스트리밍 적용하기
+- /util/delay.tsx
+
+# 3강) 컴포넌트 스트리밍
+- 컴포넌트별로 세밀하게 스트리밍 적용
+  개별로 세부 로딩 처리 가능해서 2강때보다 더 많이 사용된다
+
+- Suspense 뜻은 미완성
+  Suspense로 비동기 컴포넌트를 감싸면 Streaming하는 로딩상태 설정한다.
+  지연 컴포넌트를 로딩하기 전에는 fallback을 보여주고, 지연 로딩이 완료되면 비로소 해당 컴포넌트를 보여준다
+
+- <Suspense> & delay() 적용 페이지
+  ~/(with-searchbar)/search/page.tsx 1군데
+  ~/(with-searchbar)/page.tsx 2군데
+
+# 4강) 스켈레톤 UI
+- 로딩중에 보여줄 뼈대 UI
+- 바나프레소 어플 로딩 회색 그라데이션 화면들에 해당되는듯
+- /components/skeleton -> Suspense 적용했던 컴포넌트 fallback에 사용
+- React Loading Skeleton 라이브러리도 있음. 애니매이션 O
+
+# 5강) 에러 핸들링
+- 확인 위해 백엔드 서버 중지
+- router.refresh() : 현재 페이지에 필요한 서버 컴포넌트들을 다시 불러옴
+- reset() : 에러 상태를 초기화, 컴포넌트들을 다시 렌더링
+- startTransition: 위 두 코드를 일괄 처리되도록.
+                 router.refresh()가 비동기라서 실행 안된채로 reset()이 실행되서 업로드 안되는 문제 방지
+
+app/error.tsx : 본인 위치와 하위 폴더까지 적용. 같은 위치의 layout.tsx까지만 렌더링
+app/(with-searchbar)/search/error.tsx : 검색 결과용 에러처리 페이지
+app/book/error.tsx : 책 상세 에러처리 페이지
+=> next app router부터는 layout.tsx을 살리기 위해 error.tsx을 각각 경로별로 만들어주는 경우가 생길 수 있다.
