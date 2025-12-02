@@ -1,0 +1,59 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cover_img_container {
+    display: flex;
+    justify-content: center; /* 컨테이너의 아이템들을 가운데 정렬 */
+    padding: 20px;
+
+    background-position: center; /*커버 이미지 가운데*/
+    background-repeat: no-repeat;
+    background-size: cover; /*커버 이미지가 컨테이너에 꽉차게*/
+
+    position: relative;
+}
+
+.cover_img_container::before{ /* before는 가상 요소 */
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    content: "";
+}
+
+.cover_img_container > img {
+    z-index: 1; /* 가운데 뜨도록. 값이 없는 애들보다 위에 쌓인다 */
+    max-height: 350px;
+    height: 100%;
+}
+
+.title {
+    font-size: large;
+    font-weight: bold;
+}
+
+.subTitle {
+    color: gray;
+}
+
+.author {
+    color: gray;
+}
+
+.description {
+    background-color: rgb(245, 245, 245);
+    padding: 15px;
+    line-height: 1.3;
+    white-space: pre-line;
+    border-radius: 5px;
+}
+
+
+
+
+

@@ -1,0 +1,31 @@
+.container {
+    background-color: white;
+    max-width: 600px;
+    min-height: 100vh; /* 높이 가득 채움 */
+    margin: 0 auto; /* 가로 중앙 정렬 */
+
+    box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 29px 0px; /* 양옆 그림자 */
+    padding: 0px 15px;
+}
+
+.header {
+    height: 60px;
+
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.header > a { /* LINK 변경 */
+    color: black;
+    text-decoration: none;
+}
+
+.main {
+    padding-top: 10px;
+}
+
+.footer {
+    padding: 100px 0px;
+    color: gray;
+}

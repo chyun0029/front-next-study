@@ -1,0 +1,9 @@
+<페이지별 적용 렌더링 기법>
+- pages/index.tsx : SSG + (ISR ...revalidate 주석 처리되어있음)
+- pages/search/index.tsx : SSR ~ 검색 쿼리를 SSG로 빌드타임에 처리할 수 없었기 때문. CSR로 바꿔도됨
+- pages/book/index.tsx : SSG 동적 경로 (fallback)
+마지막 코드 작성 기준,
+SEO 설정은 모두 있음
+
+- pages/api/revalidate.ts : ISR 주문형 재검증 API (On Demand Revalidation)
+
